@@ -6,12 +6,12 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Lin
 const auxiliaryData = {
   'bench-narrow': { 
     title: 'Жим лежачи вузьким хватом',
-    image: require('../exercise/enges-bankdruecken.jpg'),
+    image: require('../exercise/enges-bankdruecken.gif'),
     description: 'Жим лежачи вузьким хватом фокусується на трицепсах та внутрішній частині грудних м\'язів. Ляжте на лаву, візьміться за гриф хватом на ширині плечей або трохи вужче, опустіть штангу до нижньої частини грудей, тримаючи лікті близько до тіла, і вижміть вагу вгору.'
   },
   'bench-dumbbells': { 
     title: 'Жим гантелей лежачи на лаві',
-    image: require('../exercise/kurzhantel-bankdruecken.webp'),
+    image: require('../exercise/kurzhantel-bankdruecken-flachbank.gif'),
     description: 'Жим гантелей лежачи є чудовою альтернативою жиму зі штангою. Ця вправа дозволяє збільшити амплітуду рухів та вирівняти м\'язовий дисбаланс, ефективно навантажуючи великий грудний м\'яз.'
   },
   'dips': { 
@@ -21,26 +21,65 @@ const auxiliaryData = {
   },
   'seated-press': { 
     title: 'Жим сидячи',
-    image: require('../exercise/multipresse-bankdruecken.jpg'),
+    image: require('../exercise/brustpresse.gif'),
     description: 'Жим у тренажері або тренажері Сміта забезпечує контрольовану траєкторію руху. Ідеально підходить для новачків або для безпечного виконання з великою вагою без страхувальника, ефективно опрацьовуючи грудні м\'язи.'
   },
-  'triceps-extension': { title: 'Розгинання на трицепс' },
+  'triceps-extension': { 
+    title: 'Розгинання на трицепс',
+    image: require('../exercise/trizeps-pushdown-kabelzug-seil.gif'),
+    description: 'Розгинання на трицепс у блочному тренажері - популярна ізолююча вправа. Виконується стоячи, тягнучи канат або рукоятку вниз, зосереджуючись на максимальному скороченні трицепса.'
+  },
   'butterfly': { 
     title: 'Бабочка',
     image: require('../exercise/cable-crossover-liegend.gif'),
     description: 'Вправа "Метелик" на тренажері або в кросовері ізолює грудні м\'язи, забезпечуючи постійне напруження протягом всього руху. Вона допомагає "промалювати" м\'язи та покращити їх форму.'
   },
   
-  'box-squat': { title: 'Присідання на тумбу' },
-  'leg-press': { title: 'Жим ногами' },
-  'dumbbell-lunges': { title: 'Випади з гантелями' },
-  'good-mornings': { title: 'Нахили зі штангою' },
-  'cable-pull': { title: 'Тяга блока' },
+  'box-squat': { 
+    title: 'Присідання на тумбу',
+    image: require('../exercise/klassischen-langhantel-kniebeugen-mit-bank.gif'),
+    description: 'Присідання на тумбу допомагають розвинути вибухову силу та відпрацювати глибину присіду. Сідаючи на тумбу, ви на мить розслабляєте м\'язи та змушені виконувати підйом за рахунок чистої сили ніг і сідниць.'
+  },
+  'leg-press': { 
+    title: 'Жим ногами',
+    image: require('../exercise/45-grad-beinpresse-mit-breiter-fussstellung.gif'),
+    description: 'Жим ногами в тренажері - безпечна альтернатива присіданням, що знімає навантаження зі спини. Змінюючи постановку ніг, можна зміщувати акцент на різні ділянки стегон та сідниць.'
+  },
+  'dumbbell-lunges': { 
+    title: 'Випади з гантелями',
+    image: require('../exercise/ausfallschritte-mit-kurzhanteln.gif'),
+    description: 'Випади з гантелями чудово опрацьовують квадрицепси, сідниці та м\'язи стабілізатори. Вони дозволяють збалансувати силу правої та лівої ноги, забезпечуючи більшу свободу рухів порівняно зі штангою.'
+  },
+  'good-mornings': { 
+    title: 'Нахили зі штангою',
+    image: require('../exercise/good-mornings-mit-der-langhantel.gif'),
+    description: 'Нахили зі штангою на плечах активно залучають м\'язи розгиначі спини, задню поверхню стегна та сідниці. Вправа вимагає правильної техніки та прямої спини для уникнення травм.'
+  },
+  'cable-pull': { 
+    title: 'Тяга блока',
+    image: require('../exercise/latzug-breit-zur-brust.gif'),
+    description: 'Тяга верхнього блоку до грудей широким хватом - базова вправа для розвитку найширших м\'язів спини. Контрольований рух дозволяє якісно відчути м\'язи спини та сформувати гарну поставу.'
+  },
 
-  'romanian-deadlift': { title: 'Румунська тяга (задня поверхня стегна/сідниці)' },
-  'deficit-deadlift': { title: 'Тяга з ями (зрив)' },
-  'hyperextension': { title: 'Гіперекстензія (розгиначі спини)' },
-  'bent-over-row': { title: 'Тяга в нахилі (найширші)' },
+  'romanian-deadlift': { 
+    title: 'Румунська тяга (задня поверхня стегна/сідниці)',
+    image: require('../exercise/rumaenisches-kreuzheben.gif'),
+    description: 'Румунська станова тяга виконується на злегка зігнутих ногах з фокусом на розтягнення задньої поверхні стегна та сідниць. На відміну від класичної, штанга не опускається повністю на підлогу.'
+  },
+  'deficit-deadlift': { 
+    title: 'Тяга з ями (зрив)',
+    description: 'Станова тяга з дефіциту (з підвищення під ногами) збільшує амплітуду руху та ускладнює початкову фазу зриву штанги. Це чудова допоміжна вправа для покращення стартової сили у класичній тязі.'
+  },
+  'hyperextension': { 
+    title: 'Гіперекстензія (розгиначі спини)',
+    image: require('../exercise/hyperextensions-auf-der-hyperextension-bank-anfaenger.gif'),
+    description: 'Гіперекстензія - безпечна і ефективна вправа для зміцнення м\'язів нижньої частини спини. Вона є відмінною профілактикою травм та допомагає стабілізувати корпус при виконанні базових вправ.'
+  },
+  'bent-over-row': { 
+    title: 'Тяга в нахилі (найширші)',
+    image: require('../exercise/langhantelrudern-obergriff.gif'),
+    description: 'Тяга штанги в нахилі - потужна базова вправа для нарощування маси та сили всієї спини. Використання верхнього прямого хвату сильніше залучає ромбоподібні м\'язи та задні дельти.'
+  },
 };
 
 export default function AuxiliaryExerciseScreen() {
@@ -142,7 +181,7 @@ const styles = StyleSheet.create({
     height: 250,
     borderRadius: 16,
     marginBottom: 30,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
   },
   imagePlaceholderText: {
     marginTop: 10,
