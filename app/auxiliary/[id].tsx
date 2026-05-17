@@ -1,15 +1,35 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Linking } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Linking, Image } from 'react-native';
 
 const auxiliaryData = {
-  'bench-narrow': { title: 'Жим лежачи вузьким хватом' },
-  'bench-dumbbells': { title: 'Жим гантелей лежачи на лаві' },
-  'dips': { title: 'Віджимання на брусах' },
-  'seated-press': { title: 'Жим сидячи' },
+  'bench-narrow': { 
+    title: 'Жим лежачи вузьким хватом',
+    image: require('../exercise/enges-bankdruecken.jpg'),
+    description: 'Жим лежачи вузьким хватом фокусується на трицепсах та внутрішній частині грудних м\'язів. Ляжте на лаву, візьміться за гриф хватом на ширині плечей або трохи вужче, опустіть штангу до нижньої частини грудей, тримаючи лікті близько до тіла, і вижміть вагу вгору.'
+  },
+  'bench-dumbbells': { 
+    title: 'Жим гантелей лежачи на лаві',
+    image: require('../exercise/kurzhantel-bankdruecken.webp'),
+    description: 'Жим гантелей лежачи є чудовою альтернативою жиму зі штангою. Ця вправа дозволяє збільшити амплітуду рухів та вирівняти м\'язовий дисбаланс, ефективно навантажуючи великий грудний м\'яз.'
+  },
+  'dips': { 
+    title: 'Віджимання на брусах',
+    image: require('../exercise/arnold-dips.gif'),
+    description: 'Віджимання на брусах — базова вправа з власною вагою. Для акценту на грудні м\'язи потрібно нахилити корпус вперед і злегка розвести лікті в сторони. Чудово розвиває нижню частину грудей та трицепс.'
+  },
+  'seated-press': { 
+    title: 'Жим сидячи',
+    image: require('../exercise/multipresse-bankdruecken.jpg'),
+    description: 'Жим у тренажері або тренажері Сміта забезпечує контрольовану траєкторію руху. Ідеально підходить для новачків або для безпечного виконання з великою вагою без страхувальника, ефективно опрацьовуючи грудні м\'язи.'
+  },
   'triceps-extension': { title: 'Розгинання на трицепс' },
-  'butterfly': { title: 'Бабочка' },
+  'butterfly': { 
+    title: 'Бабочка',
+    image: require('../exercise/cable-crossover-liegend.gif'),
+    description: 'Вправа "Метелик" на тренажері або в кросовері ізолює грудні м\'язи, забезпечуючи постійне напруження протягом всього руху. Вона допомагає "промалювати" м\'язи та покращити їх форму.'
+  },
   
   'box-squat': { title: 'Присідання на тумбу' },
   'leg-press': { title: 'Жим ногами' },
@@ -49,16 +69,19 @@ export default function AuxiliaryExerciseScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Placeholder for Image */}
-        <View style={styles.imagePlaceholder}>
-          <Ionicons name="image-outline" size={60} color="#ccc" />
-          <Text style={styles.imagePlaceholderText}>Зображення буде додано пізніше</Text>
-        </View>
+        {data.image ? (
+          <Image source={data.image} style={styles.exerciseImage} />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Ionicons name="image-outline" size={60} color="#ccc" />
+            <Text style={styles.imagePlaceholderText}>Зображення буде додано пізніше</Text>
+          </View>
+        )}
 
         <View style={styles.contentCard}>
           <Text style={styles.sectionTitle}>Опис вправи</Text>
           <Text style={styles.descriptionPlaceholder}>
-            Тут буде детальний опис техніки виконання вправи "{data.title}". Цей текст тимчасовий та буде замінений у майбутньому.
+            {data.description || `Тут буде детальний опис техніки виконання вправи "${data.title}". Цей текст тимчасовий та буде замінений у майбутньому.`}
           </Text>
         </View>
 
@@ -113,6 +136,13 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#ddd',
     borderStyle: 'dashed',
+  },
+  exerciseImage: {
+    width: '100%',
+    height: 250,
+    borderRadius: 16,
+    marginBottom: 30,
+    resizeMode: 'cover',
   },
   imagePlaceholderText: {
     marginTop: 10,
