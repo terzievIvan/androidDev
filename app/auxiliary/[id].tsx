@@ -89,10 +89,10 @@ export default function AuxiliaryExerciseScreen() {
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const cardBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const cardBgColor = useThemeColor({ light: '#fff', dark: '#121212' }, 'background');
   const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
-  const imagePlaceholderBgColor = useThemeColor({ light: '#eaeaea', dark: '#333' }, 'background');
-  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
+  const imagePlaceholderBgColor = useThemeColor({ light: '#eaeaea', dark: '#1c1c1c' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#2a2a2a' }, 'background');
 
   if (!data) {
     return (

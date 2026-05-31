@@ -55,10 +55,13 @@ export default function ExerciseScreen() {
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const cardBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const cardBgColor = useThemeColor({ light: '#fff', dark: '#121212' }, 'background');
   const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
-  const buttonBgColor = useThemeColor({ light: '#f8f9fa', dark: '#333' }, 'background');
-  const borderColor = useThemeColor({ light: '#e9ecef', dark: '#444' }, 'background');
+  const buttonBgColor = useThemeColor({ light: '#f8f9fa', dark: '#1c1c1c' }, 'background');
+  const borderColor = useThemeColor({ light: '#e9ecef', dark: '#2a2a2a' }, 'background');
+  const recordIconTintColor = useThemeColor({ light: '#000000', dark: '#ffffff' }, 'text');
+
+  const user = useSelector((state: any) => state.user);
 
   if (!data) {
     return (
@@ -68,8 +71,6 @@ export default function ExerciseScreen() {
       </SafeAreaView>
     );
   }
-
-  const user = useSelector((state: any) => state.user);
 
   const handleSave = async () => {
     const val = parseFloat(newValue);
@@ -107,7 +108,7 @@ export default function ExerciseScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
 
           <View style={styles.iconContainer}>
-            <Image source={data.image} style={{ width: 120, height: 120, resizeMode: 'contain' }} />
+            <Image source={data.image} style={{ width: 120, height: 120, resizeMode: 'contain', tintColor: recordIconTintColor }} />
           </View>
 
           <View style={[styles.card, { backgroundColor: cardBgColor }]}>

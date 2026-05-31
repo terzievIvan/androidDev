@@ -42,10 +42,10 @@ export default function ChatScreen() {
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const inputBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
-  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
-  const botBubbleColor = useThemeColor({ light: '#e9ecef', dark: '#333' }, 'background');
-  const headerBgColor = useThemeColor({ light: '#fff', dark: '#1e1e1e' }, 'background');
+  const inputBgColor = useThemeColor({ light: '#fff', dark: '#121212' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#2a2a2a' }, 'background');
+  const botBubbleColor = useThemeColor({ light: '#e9ecef', dark: '#1c1c1c' }, 'background');
+  const headerBgColor = useThemeColor({ light: '#fff', dark: '#121212' }, 'background');
   const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
 
   const sendMessage = async () => {

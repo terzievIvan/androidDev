@@ -16,8 +16,8 @@ export default function EditProfileScreen() {
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const inputBgColor = useThemeColor({ light: '#f9f9f9', dark: '#222' }, 'background');
-  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
+  const inputBgColor = useThemeColor({ light: '#f9f9f9', dark: '#121212' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#2a2a2a' }, 'background');
 
   const [name, setName] = useState(user.name || '');
   const [avatarUri, setAvatarUri] = useState<string | null>(user.avatarUri || null);
@@ -92,7 +92,7 @@ export default function EditProfileScreen() {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={[styles.label, { color: textColor }]}>Ім'я</Text>
+          <Text style={[styles.label, { color: textColor }]}>{"Ім'я"}</Text>
           <TextInput
             style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
             placeholder="Введіть ваше нове ім'я"

@@ -17,10 +17,10 @@ export default function FriendsScreen() {
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const cardBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
-  const inputBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
-  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
-  const statBgColor = useThemeColor({ light: '#f9f9f9', dark: '#333' }, 'background');
+  const cardBgColor = useThemeColor({ light: '#fff', dark: '#121212' }, 'background');
+  const inputBgColor = useThemeColor({ light: '#fff', dark: '#121212' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#2a2a2a' }, 'background');
+  const statBgColor = useThemeColor({ light: '#f9f9f9', dark: '#1c1c1c' }, 'background');
   const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
 
   const loadFriends = async () => {

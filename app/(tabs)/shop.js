@@ -51,13 +51,14 @@ export default function CalculatorScreen() {
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const cardBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const cardBgColor = useThemeColor({ light: '#fff', dark: '#121212' }, 'background');
   const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
-  const inputBgColor = useThemeColor({ light: '#f8f9fa', dark: '#333' }, 'background');
-  const borderColor = useThemeColor({ light: '#e9ecef', dark: '#444' }, 'background');
-  const tabBgColor = useThemeColor({ light: '#e9ecef', dark: '#333' }, 'background');
-  const tabActiveBgColor = useThemeColor({ light: '#fff', dark: '#444' }, 'background');
+  const inputBgColor = useThemeColor({ light: '#f8f9fa', dark: '#1c1c1c' }, 'background');
+  const borderColor = useThemeColor({ light: '#e9ecef', dark: '#2a2a2a' }, 'background');
+  const tabBgColor = useThemeColor({ light: '#e9ecef', dark: '#1c1c1c' }, 'background');
+  const tabActiveBgColor = useThemeColor({ light: '#fff', dark: '#2a2a2a' }, 'background');
   const headerTextColor = useThemeColor({ light: '#1a1a2e', dark: '#fff' }, 'text');
+  const recordIconTintColor = useThemeColor({ light: '#000000', dark: '#ffffff' }, 'text');
 
   const calculate1RM = () => {
     Keyboard.dismiss();
@@ -149,19 +150,19 @@ export default function CalculatorScreen() {
                 <Text style={[styles.recordsTitle, { color: textColor }]}>Мої Рекорди</Text>
                 <View style={styles.recordsRow}>
                   <TouchableOpacity style={[styles.recordCard, { backgroundColor: cardBgColor }]} onPress={() => router.push('/exercise/bench')}>
-                    <Image source={require('../../app/exercise/benchpress.png')} style={styles.recordIcon} />
+                    <Image source={require('../../app/exercise/benchpress.png')} style={[styles.recordIcon, { tintColor: recordIconTintColor }]} />
                     <Text style={[styles.recordLabel, { color: subTextColor }]}>Жим лежачи</Text>
                     <Text style={[styles.recordValue, { color: headerTextColor }]}>{records.bench} кг</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity style={[styles.recordCard, { backgroundColor: cardBgColor }]} onPress={() => router.push('/exercise/squat')}>
-                    <Image source={require('../../app/exercise/squat.png')} style={styles.recordIcon} />
+                    <Image source={require('../../app/exercise/squat.png')} style={[styles.recordIcon, { tintColor: recordIconTintColor }]} />
                     <Text style={[styles.recordLabel, { color: subTextColor }]}>Присяд зі штангою</Text>
                     <Text style={[styles.recordValue, { color: headerTextColor }]}>{records.squat} кг</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity style={[styles.recordCard, { backgroundColor: cardBgColor }]} onPress={() => router.push('/exercise/deadlift')}>
-                    <Image source={require('../../app/exercise/deadlift.png')} style={styles.recordIcon} />
+                    <Image source={require('../../app/exercise/deadlift.png')} style={[styles.recordIcon, { tintColor: recordIconTintColor }]} />
                     <Text style={[styles.recordLabel, { color: subTextColor }]}>Станова тяга</Text>
                     <Text style={[styles.recordValue, { color: headerTextColor }]}>{records.deadlift} кг</Text>
                   </TouchableOpacity>
