@@ -54,13 +54,22 @@ async function initDB() {
     );
   `);
 
+  try {
+    const tableInfo = await db.all("PRAGMA table_info(chat_history)");
+    const hasEmail = tableInfo.some(col => col.name === 'userEmail');
+    if (hasEmail) {
+      await db.exec("DROP TABLE chat_history");
+    }
+  } catch(e) {}
+
   await db.exec(`
     CREATE TABLE IF NOT EXISTS chat_history (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      userEmail TEXT NOT NULL,
+      userId INTEGER NOT NULL,
       text TEXT NOT NULL,
-      sender TEXT NOT NULL,
-      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+      sender INTEGER NOT NULL, -- 0 for user, 1 for bot
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(userId) REFERENCES users(id)
     );
   `);
 
@@ -284,11 +293,16 @@ app.post('/chat', async (req, res) => {
     return res.status(400).json({ error: 'Email, text, and sender are required' });
   }
   try {
+    const user = await db.get('SELECT id FROM users WHERE email = ?', [email]);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const senderVal = sender === 'user' ? 0 : 1;
     const result = await db.run(
-      'INSERT INTO chat_history (userEmail, text, sender) VALUES (?, ?, ?)',
-      [email, text, sender]
+      'INSERT INTO chat_history (userId, text, sender) VALUES (?, ?, ?)',
+      [user.id, text, senderVal]
     );
-    res.status(201).json({ id: result.lastID, userEmail: email, text, sender });
+    res.status(201).json({ id: result.lastID, email, text, sender });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
@@ -297,11 +311,21 @@ app.post('/chat', async (req, res) => {
 
 app.get('/chat/:email', async (req, res) => {
   try {
+    const user = await db.get('SELECT id FROM users WHERE email = ?', [req.params.email]);
+    if (!user) {
+      return res.status(200).json([]);
+    }
     const messages = await db.all(
-      'SELECT id, text, sender, timestamp FROM chat_history WHERE userEmail = ? ORDER BY id ASC',
-      [req.params.email]
+      'SELECT id, text, sender, timestamp FROM chat_history WHERE userId = ? ORDER BY id ASC',
+      [user.id]
     );
-    res.status(200).json(messages);
+    const mappedMessages = messages.map(msg => ({
+      id: msg.id,
+      text: msg.text,
+      sender: msg.sender === 0 ? 'user' : 'bot',
+      timestamp: msg.timestamp
+    }));
+    res.status(200).json(mappedMessages);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });
