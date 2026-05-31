@@ -54,6 +54,16 @@ async function initDB() {
     );
   `);
 
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS chat_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userEmail TEXT NOT NULL,
+      text TEXT NOT NULL,
+      sender TEXT NOT NULL,
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
   console.log('Backend database initialized.');
 }
 
@@ -262,6 +272,36 @@ app.delete('/friends/:email/:friendId', async (req, res) => {
     } else {
       res.status(404).json({ error: 'Friend not found' });
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/chat', async (req, res) => {
+  const { email, text, sender } = req.body;
+  if (!email || !text || !sender) {
+    return res.status(400).json({ error: 'Email, text, and sender are required' });
+  }
+  try {
+    const result = await db.run(
+      'INSERT INTO chat_history (userEmail, text, sender) VALUES (?, ?, ?)',
+      [email, text, sender]
+    );
+    res.status(201).json({ id: result.lastID, userEmail: email, text, sender });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.get('/chat/:email', async (req, res) => {
+  try {
+    const messages = await db.all(
+      'SELECT id, text, sender, timestamp FROM chat_history WHERE userEmail = ? ORDER BY id ASC',
+      [req.params.email]
+    );
+    res.status(200).json(messages);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

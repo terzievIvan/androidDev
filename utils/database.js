@@ -205,3 +205,42 @@ export const loginWithGoogle = async (email, name, avatarUri) => {
     return null;
   }
 };
+
+export const saveChatMessage = async (email, text, sender) => {
+  try {
+    const response = await fetch(`${API_URL}/chat`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, text, sender }),
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to save chat message');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error saving chat message on server:', error);
+    return null;
+  }
+};
+
+export const getChatHistory = async (email) => {
+  try {
+    const response = await fetch(`${API_URL}/chat/${email}`);
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch chat history');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error fetching chat history from server:', error);
+    return [];
+  }
+};

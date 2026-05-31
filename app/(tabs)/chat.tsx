@@ -1,6 +1,6 @@
 import { FontAwesome } from '@expo/vector-icons';
 import Constants from 'expo-constants';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useThemeColor } from '../../hooks/use-theme-color';
+import { getChatHistory, saveChatMessage } from '../../utils/database';
 
 
 let N8N_WEBHOOK_URL = 'http://localhost:5678/webhook/ask-ai';
@@ -40,6 +41,32 @@ export default function ChatScreen() {
   const [isTyping, setIsTyping] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
+  useEffect(() => {
+    const loadChatHistory = async () => {
+      if (user?.email) {
+        const history = await getChatHistory(user.email);
+        if (history && history.length > 0) {
+          const formattedHistory = history.map((msg: any) => ({
+            id: msg.id.toString(),
+            text: msg.text,
+            sender: msg.sender,
+          }));
+          setMessages(formattedHistory);
+        } else {
+          setMessages([
+            { id: '1', text: 'Привіт! Я ваш ШІ-тренер. Я можу допомогти вам з планом тренувань, харчуванням або відповісти на будь-які питання.', sender: 'bot' }
+          ]);
+        }
+      } else {
+        setMessages([
+          { id: '1', text: 'Привіт! Я ваш ШІ-тренер. Я можу допомогти вам з планом тренувань, харчуванням або відповісти на будь-які питання.', sender: 'bot' }
+        ]);
+      }
+    };
+
+    loadChatHistory();
+  }, [user?.email]);
+
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const inputBgColor = useThemeColor({ light: '#fff', dark: '#121212' }, 'background');
@@ -49,29 +76,32 @@ export default function ChatScreen() {
   const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
 
   const sendMessage = async () => {
-    if (!inputText.trim()) return;
+    const userText = inputText.trim();
+    if (!userText) return;
 
     const userMessage = {
       id: Date.now().toString(),
-      text: inputText.trim(),
+      text: userText,
       sender: 'user',
     };
-
 
     setMessages((prev) => [...prev, userMessage]);
     setInputText('');
     setIsTyping(true);
 
+    if (user?.email) {
+      saveChatMessage(user.email, userText, 'user').catch(e => console.error("Error saving user message:", e));
+    }
+
     try {
       if (N8N_WEBHOOK_URL) {
-
         const response = await fetch(N8N_WEBHOOK_URL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            message: userMessage.text,
+            message: userText,
             userId: userId
           }),
         });
@@ -97,27 +127,40 @@ export default function ChatScreen() {
         };
         setMessages((prev) => [...prev, botMessage]);
 
-      } else {
+        if (user?.email) {
+          saveChatMessage(user.email, replyText, 'bot').catch(e => console.error("Error saving bot message:", e));
+        }
 
-        setTimeout(() => {
+      } else {
+        setTimeout(async () => {
+          const replyText = `Це тестова відповідь від ШІ на ваше повідомлення: "${userText}". Вставте N8N_WEBHOOK_URL у коді, щоб підключити справжнього бота.`;
           const mockBotMessage = {
             id: (Date.now() + 1).toString(),
-            text: `Це тестова відповідь від ШІ на ваше повідомлення: "${userMessage.text}". Вставте N8N_WEBHOOK_URL у коді, щоб підключити справжнього бота.`,
+            text: replyText,
             sender: 'bot',
           };
           setMessages((prev) => [...prev, mockBotMessage]);
           setIsTyping(false);
+
+          if (user?.email) {
+            saveChatMessage(user.email, replyText, 'bot').catch(e => console.error("Error saving mock bot message:", e));
+          }
         }, 1500);
         return;
       }
     } catch (error: any) {
       console.error('Error fetching from n8n:', error);
+      const errorMessageText = `Помилка: ${error.message || "сталася помилка з'єднання з ШІ сервером."}`;
       const errorMessage = {
         id: (Date.now() + 1).toString(),
-        text: `Помилка: ${error.message || "сталася помилка з'єднання з ШІ сервером."}`,
+        text: errorMessageText,
         sender: 'bot',
       };
       setMessages((prev) => [...prev, errorMessage]);
+
+      if (user?.email) {
+        saveChatMessage(user.email, errorMessageText, 'bot').catch(e => console.error("Error saving error message:", e));
+      }
     }
 
     setIsTyping(false);
