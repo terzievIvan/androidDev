@@ -14,6 +14,7 @@ import {
   View
 } from 'react-native';
 import { useSelector } from 'react-redux';
+import { useThemeColor } from '../../hooks/use-theme-color';
 
 
 let N8N_WEBHOOK_URL = 'http://localhost:5678/webhook/ask-ai';
@@ -38,6 +39,14 @@ export default function ChatScreen() {
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const inputBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
+  const botBubbleColor = useThemeColor({ light: '#e9ecef', dark: '#333' }, 'background');
+  const headerBgColor = useThemeColor({ light: '#fff', dark: '#1e1e1e' }, 'background');
+  const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
@@ -117,8 +126,8 @@ export default function ChatScreen() {
   const renderMessage = ({ item }: { item: any }) => {
     const isUser = item.sender === 'user';
     return (
-      <View style={[styles.messageBubble, isUser ? styles.userBubble : styles.botBubble]}>
-        <Text style={[styles.messageText, isUser ? styles.userText : styles.botText]}>
+      <View style={[styles.messageBubble, isUser ? styles.userBubble : [styles.botBubble, { backgroundColor: botBubbleColor }]]}>
+        <Text style={[styles.messageText, isUser ? styles.userText : { color: textColor }]}>
           {item.text}
         </Text>
       </View>
@@ -126,14 +135,14 @@ export default function ChatScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <KeyboardAvoidingView
         style={styles.keyboardAvoid}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>ШІ Тренер</Text>
+        <View style={[styles.header, { backgroundColor: headerBgColor, borderBottomColor: borderColor }]}>
+          <Text style={[styles.headerTitle, { color: textColor }]}>ШІ Тренер</Text>
         </View>
 
         <FlatList
@@ -149,13 +158,13 @@ export default function ChatScreen() {
         {isTyping && (
           <View style={styles.typingIndicator}>
             <ActivityIndicator size="small" color="#007bff" />
-            <Text style={styles.typingText}>ШІ друкує...</Text>
+            <Text style={[styles.typingText, { color: subTextColor }]}>ШІ друкує...</Text>
           </View>
         )}
 
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { backgroundColor: inputBgColor, borderTopColor: borderColor }]}>
           <TextInput
-            style={styles.textInput}
+            style={[styles.textInput, { backgroundColor, borderColor, color: textColor }]}
             placeholder="Напишіть повідомлення"
             placeholderTextColor="#888"
             value={inputText}
@@ -178,22 +187,18 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   keyboardAvoid: {
     flex: 1,
   },
   header: {
     padding: 15,
-    backgroundColor: '#fff',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   messageList: {
     padding: 15,
@@ -213,7 +218,6 @@ const styles = StyleSheet.create({
   },
   botBubble: {
     alignSelf: 'flex-start',
-    backgroundColor: '#e9ecef',
     borderBottomLeftRadius: 4,
   },
   messageText: {
@@ -223,9 +227,6 @@ const styles = StyleSheet.create({
   userText: {
     color: '#fff',
   },
-  botText: {
-    color: '#333',
-  },
   typingIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -234,20 +235,16 @@ const styles = StyleSheet.create({
   },
   typingText: {
     marginLeft: 8,
-    color: '#666',
     fontStyle: 'italic',
   },
   inputContainer: {
     flexDirection: 'row',
     padding: 10,
-    backgroundColor: '#fff',
     borderTopWidth: 1,
-    borderTopColor: '#ddd',
     alignItems: 'flex-end',
   },
   textInput: {
     flex: 1,
-    backgroundColor: '#f9f9f9',
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 20,
@@ -256,7 +253,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     fontSize: 16,
     maxHeight: 100,
-    color: '#333',
   },
   sendButton: {
     width: 44,

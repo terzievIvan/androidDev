@@ -3,13 +3,21 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView,
 import * as ImagePicker from 'expo-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserProfile, logoutUser } from '../../store/userSlice';
+import { setTheme } from '../../store/themeSlice';
 import { router } from 'expo-router';
 import { updateUser } from '../../utils/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useThemeColor } from '../../hooks/use-theme-color';
 
 export default function EditProfileScreen() {
   const user = useSelector((state: any) => state.user);
+  const themeMode = useSelector((state: any) => state.theme?.mode || 'system');
   const dispatch = useDispatch();
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const inputBgColor = useThemeColor({ light: '#f9f9f9', dark: '#222' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
 
   const [name, setName] = useState(user.name || '');
   const [avatarUri, setAvatarUri] = useState<string | null>(user.avatarUri || null);
@@ -54,10 +62,14 @@ export default function EditProfileScreen() {
     router.replace('/');
   };
 
+  const handleThemeChange = (newTheme: 'system' | 'light' | 'dark') => {
+    dispatch(setTheme(newTheme));
+  };
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Редагування профілю</Text>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
+      <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
+        <Text style={[styles.title, { color: textColor }]}>Редагування профілю</Text>
 
         <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
           {avatarUri ? (
@@ -71,23 +83,47 @@ export default function EditProfileScreen() {
         </TouchableOpacity>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email (тільки читання)</Text>
+          <Text style={[styles.label, { color: textColor }]}>Email (тільки читання)</Text>
           <TextInput
-            style={[styles.input, styles.disabledInput]}
+            style={[styles.input, styles.disabledInput, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
             value={user.email}
             editable={false}
           />
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Ім'я</Text>
+          <Text style={[styles.label, { color: textColor }]}>Ім'я</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
             placeholder="Введіть ваше нове ім'я"
             value={name}
             onChangeText={setName}
             placeholderTextColor="#888"
           />
+        </View>
+
+        <View style={styles.themeContainer}>
+          <Text style={[styles.label, { color: textColor }]}>Тема оформлення</Text>
+          <View style={styles.themeOptions}>
+            <TouchableOpacity 
+              style={[styles.themeOption, themeMode === 'system' && styles.themeOptionActive]} 
+              onPress={() => handleThemeChange('system')}
+            >
+              <Text style={[styles.themeOptionText, themeMode === 'system' && styles.themeOptionTextActive]}>Системна</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.themeOption, themeMode === 'light' && styles.themeOptionActive]} 
+              onPress={() => handleThemeChange('light')}
+            >
+              <Text style={[styles.themeOptionText, themeMode === 'light' && styles.themeOptionTextActive]}>Світла</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.themeOption, themeMode === 'dark' && styles.themeOptionActive]} 
+              onPress={() => handleThemeChange('dark')}
+            >
+              <Text style={[styles.themeOptionText, themeMode === 'dark' && styles.themeOptionTextActive]}>Темна</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleSave}>
@@ -109,17 +145,14 @@ export default function EditProfileScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#fff',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -158,21 +191,16 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#f9f9f9',
     borderWidth: 1,
-    borderColor: '#ddd',
     padding: 12,
     borderRadius: 8,
     fontSize: 16,
-    color: '#333',
   },
   disabledInput: {
-    backgroundColor: '#eaeaea',
-    color: '#888',
+    opacity: 0.7,
   },
   button: {
     backgroundColor: '#28a745',
@@ -206,5 +234,31 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  themeContainer: {
+    marginBottom: 20,
+  },
+  themeOptions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  themeOption: {
+    flex: 1,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#007bff',
+    alignItems: 'center',
+    marginHorizontal: 5,
+    borderRadius: 8,
+  },
+  themeOptionActive: {
+    backgroundColor: '#007bff',
+  },
+  themeOptionText: {
+    color: '#007bff',
+    fontWeight: '600',
+  },
+  themeOptionTextActive: {
+    color: '#fff',
   },
 });

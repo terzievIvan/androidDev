@@ -6,6 +6,7 @@ import { addFriend, getFriends, removeFriend } from '../../utils/database';
 import { useFocusEffect } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-toast-message';
+import { useThemeColor } from '../../hooks/use-theme-color';
 
 export default function FriendsScreen() {
   const user = useSelector((state: any) => state.user);
@@ -13,6 +14,14 @@ export default function FriendsScreen() {
   const [friendsList, setFriendsList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const cardBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const inputBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
+  const statBgColor = useThemeColor({ light: '#f9f9f9', dark: '#333' }, 'background');
+  const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
 
   const loadFriends = async () => {
     if (!user.email) return;
@@ -111,46 +120,46 @@ export default function FriendsScreen() {
   };
 
   const renderFriendCard = ({ item }: { item: any }) => (
-    <View style={styles.friendCard}>
+    <View style={[styles.friendCard, { backgroundColor: cardBgColor }]}>
       <View style={styles.friendHeader}>
         {item.avatarUri ? (
           <Image source={{ uri: item.avatarUri }} style={styles.friendAvatar} />
         ) : (
-          <View style={[styles.friendAvatar, styles.placeholderAvatar]}>
-            <FontAwesome name="user" size={24} color="#888" />
+          <View style={[styles.friendAvatar, styles.placeholderAvatar, { backgroundColor: statBgColor }]}>
+            <FontAwesome name="user" size={24} color={subTextColor} />
           </View>
         )}
         <View style={styles.friendInfo}>
-          <Text style={styles.friendName}>{item.name}</Text>
-          <Text style={styles.friendTag}>{item.userTag}</Text>
+          <Text style={[styles.friendName, { color: textColor }]}>{item.name}</Text>
+          <Text style={[styles.friendTag, { color: subTextColor }]}>{item.userTag}</Text>
         </View>
         <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteFriend(item.id, item.name)}>
           <Ionicons name="trash-outline" size={22} color="#ff4444" />
         </TouchableOpacity>
       </View>
       
-      <View style={styles.statsContainer}>
+      <View style={[styles.statsContainer, { backgroundColor: statBgColor }]}>
         <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Жим</Text>
-          <Text style={styles.statValue}>{item.bench || 0} кг</Text>
+          <Text style={[styles.statLabel, { color: subTextColor }]}>Жим</Text>
+          <Text style={[styles.statValue, { color: textColor }]}>{item.bench || 0} кг</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Присяд</Text>
-          <Text style={styles.statValue}>{item.squat || 0} кг</Text>
+          <Text style={[styles.statLabel, { color: subTextColor }]}>Присяд</Text>
+          <Text style={[styles.statValue, { color: textColor }]}>{item.squat || 0} кг</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Станова</Text>
-          <Text style={styles.statValue}>{item.deadlift || 0} кг</Text>
+          <Text style={[styles.statLabel, { color: subTextColor }]}>Станова</Text>
+          <Text style={[styles.statValue, { color: textColor }]}>{item.deadlift || 0} кг</Text>
         </View>
       </View>
     </View>
   );
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <View style={styles.container}>
-        <View style={styles.myTagContainer}>
-          <Text style={styles.myTagLabel}>Ваш тег для друзів (натисніть, щоб скопіювати):</Text>
+        <View style={[styles.myTagContainer, { backgroundColor: cardBgColor }]}>
+          <Text style={[styles.myTagLabel, { color: subTextColor }]}>Ваш тег для друзів (натисніть, щоб скопіювати):</Text>
           <TouchableOpacity style={styles.tagBox} onPress={copyToClipboard}>
             <Text style={styles.myTagValue}>{user.userTag || 'Немає тегу'}</Text>
           </TouchableOpacity>
@@ -158,7 +167,7 @@ export default function FriendsScreen() {
 
         <View style={styles.addFriendContainer}>
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
             placeholder="Введіть тег (наприклад #qw345r)"
             value={friendTag}
             onChangeText={setFriendTag}
@@ -170,7 +179,7 @@ export default function FriendsScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.listTitle}>Ваші друзі ({friendsList.length})</Text>
+        <Text style={[styles.listTitle, { color: textColor }]}>Ваші друзі ({friendsList.length})</Text>
 
         <FlatList
           data={friendsList}
@@ -179,14 +188,14 @@ export default function FriendsScreen() {
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#007bff']} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#007bff']} tintColor={textColor} />
           }
           ListEmptyComponent={
             !loading ? (
               <View style={styles.emptyContainer}>
-                <Ionicons name="people-outline" size={60} color="#ccc" />
-                <Text style={styles.emptyText}>У вас поки немає друзів.</Text>
-                <Text style={styles.emptySubtext}>Додайте когось за тегом, щоб бачити їх результати!</Text>
+                <Ionicons name="people-outline" size={60} color={subTextColor} />
+                <Text style={[styles.emptyText, { color: textColor }]}>У вас поки немає друзів.</Text>
+                <Text style={[styles.emptySubtext, { color: subTextColor }]}>Додайте когось за тегом, щоб бачити їх результати!</Text>
               </View>
             ) : null
           }
@@ -199,14 +208,12 @@ export default function FriendsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f7fa',
   },
   container: {
     flex: 1,
     padding: 15,
   },
   myTagContainer: {
-    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 16,
     alignItems: 'center',
@@ -240,14 +247,11 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 12,
     paddingHorizontal: 15,
     fontSize: 16,
     marginRight: 10,
-    color: '#333',
   },
   addButton: {
     backgroundColor: '#007bff',
@@ -267,7 +271,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   friendCard: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 15,
     marginBottom: 15,
@@ -289,7 +292,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   placeholderAvatar: {
-    backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -307,12 +309,10 @@ const styles = StyleSheet.create({
   },
   friendTag: {
     fontSize: 14,
-    color: '#888',
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#f9f9f9',
     padding: 12,
     borderRadius: 12,
   },

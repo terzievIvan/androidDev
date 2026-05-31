@@ -8,12 +8,18 @@ import { useDispatch } from 'react-redux';
 import { registerUser } from '../store/userSlice'; // Reusing this action to set current user
 import { loginUser, loginWithGoogle } from '../utils/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useThemeColor } from '../hooks/use-theme-color';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const inputBgColor = useThemeColor({ light: '#f9f9f9', dark: '#222' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
 
   const dispatch = useDispatch();
 
@@ -134,15 +140,15 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <Text style={styles.title}>Вхід в акаунт</Text>
+        <View style={[styles.container, { backgroundColor }]}>
+          <Text style={[styles.title, { color: textColor }]}>Вхід в акаунт</Text>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
+            <Text style={[styles.label, { color: textColor }]}>Email</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
               placeholder="Введіть ваш email"
               value={email}
               onChangeText={handleEmailChange}
@@ -155,9 +161,9 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Пароль</Text>
+            <Text style={[styles.label, { color: textColor }]}>Пароль</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
               placeholder="Введіть пароль"
               value={password}
               onChangeText={handlePasswordChange}
@@ -192,18 +198,15 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#fff',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -213,17 +216,13 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#f9f9f9',
     borderWidth: 1,
-    borderColor: '#ddd',
     padding: 12,
     borderRadius: 8,
     fontSize: 16,
-    color: '#333',
   },
   button: {
     backgroundColor: '#28a745',

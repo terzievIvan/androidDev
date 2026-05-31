@@ -9,6 +9,7 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import * as AuthSession from 'expo-auth-session';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useThemeColor } from '../hooks/use-theme-color';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -19,6 +20,11 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const inputBgColor = useThemeColor({ light: '#f9f9f9', dark: '#222' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
 
   const dispatch = useDispatch();
 
@@ -159,15 +165,15 @@ export default function RegisterScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Реєстрація</Text>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
+      <ScrollView contentContainerStyle={[styles.container, { backgroundColor }]}>
+        <Text style={[styles.title, { color: textColor }]}>Реєстрація</Text>
 
         <TouchableOpacity onPress={pickImage} style={styles.avatarContainer}>
           {avatarUri ? (
             <Image source={{ uri: avatarUri }} style={styles.avatar} />
           ) : (
-            <View style={styles.avatarPlaceholder}>
+            <View style={[styles.avatarPlaceholder, { backgroundColor: inputBgColor, borderColor }]}>
               <Text style={styles.avatarText}>+</Text>
             </View>
           )}
@@ -175,9 +181,9 @@ export default function RegisterScreen() {
         </TouchableOpacity>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Ім'я</Text>
+          <Text style={[styles.label, { color: textColor }]}>Ім'я</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
             placeholder="Введіть ваше ім'я"
             value={name}
             onChangeText={handleNameChange}
@@ -188,9 +194,9 @@ export default function RegisterScreen() {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
+          <Text style={[styles.label, { color: textColor }]}>Email</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
             placeholder="Введіть ваш email"
             value={email}
             onChangeText={handleEmailChange}
@@ -203,9 +209,9 @@ export default function RegisterScreen() {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Пароль</Text>
+          <Text style={[styles.label, { color: textColor }]}>Пароль</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
             placeholder="Введіть пароль"
             value={password}
             onChangeText={handlePasswordChange}
@@ -217,9 +223,9 @@ export default function RegisterScreen() {
         </View>
 
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Підтвердження паролю</Text>
+          <Text style={[styles.label, { color: textColor }]}>Підтвердження паролю</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
             placeholder="Введіть пароль ще раз"
             value={confirmPassword}
             onChangeText={handleConfirmPasswordChange}
@@ -253,18 +259,15 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flexGrow: 1,
     padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#fff',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 30,
     textAlign: 'center',
   },
@@ -281,11 +284,9 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#ddd',
     borderStyle: 'dashed',
   },
   avatarText: {
@@ -303,17 +304,13 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#f9f9f9',
     borderWidth: 1,
-    borderColor: '#ddd',
     padding: 12,
     borderRadius: 8,
     fontSize: 16,
-    color: '#333',
   },
   button: {
     backgroundColor: '#007bff',

@@ -22,6 +22,7 @@ import {
   calculateNewWilks,
   calculateOldWilks,
 } from '../../utils/calculator';
+import { useThemeColor } from '../../hooks/use-theme-color';
 
 export default function CalculatorScreen() {
   const records = useSelector((state) => state.user.records) || { bench: 0, squat: 0, deadlift: 0, bodyWeight: 0 };
@@ -47,6 +48,16 @@ export default function CalculatorScreen() {
   const [event, setEvent] = useState('CL'); // CL = Classic/Raw, EQ = Equipped
   const [category, setCategory] = useState('PL'); // PL = Full Meet, BN = Bench Only
   const [scores, setScores] = useState(null);
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const cardBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
+  const inputBgColor = useThemeColor({ light: '#f8f9fa', dark: '#333' }, 'background');
+  const borderColor = useThemeColor({ light: '#e9ecef', dark: '#444' }, 'background');
+  const tabBgColor = useThemeColor({ light: '#e9ecef', dark: '#333' }, 'background');
+  const tabActiveBgColor = useThemeColor({ light: '#fff', dark: '#444' }, 'background');
+  const headerTextColor = useThemeColor({ light: '#1a1a2e', dark: '#fff' }, 'text');
 
   const calculate1RM = () => {
     Keyboard.dismiss();
@@ -109,25 +120,25 @@ export default function CalculatorScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
 
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Калькулятори</Text>
+            <Text style={[styles.headerTitle, { color: headerTextColor }]}>Калькулятори</Text>
             
-            <View style={styles.tabContainer}>
+            <View style={[styles.tabContainer, { backgroundColor: tabBgColor }]}>
               <TouchableOpacity 
-                style={[styles.tabButton, activeTab === '1rm' && styles.tabButtonActive]}
+                style={[styles.tabButton, activeTab === '1rm' && [styles.tabButtonActive, { backgroundColor: tabActiveBgColor }]]}
                 onPress={() => setActiveTab('1rm')}
               >
-                <Text style={[styles.tabText, activeTab === '1rm' && styles.tabTextActive]}>1RM Максимум</Text>
+                <Text style={[styles.tabText, activeTab === '1rm' && [styles.tabTextActive, { color: headerTextColor }]]}>1RM Максимум</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={[styles.tabButton, activeTab === 'scores' && styles.tabButtonActive]}
+                style={[styles.tabButton, activeTab === 'scores' && [styles.tabButtonActive, { backgroundColor: tabActiveBgColor }]]}
                 onPress={() => setActiveTab('scores')}
               >
-                <Text style={[styles.tabText, activeTab === 'scores' && styles.tabTextActive]}>Рейтинги (DOTS/GL)</Text>
+                <Text style={[styles.tabText, activeTab === 'scores' && [styles.tabTextActive, { color: headerTextColor }]]}>Рейтинги (DOTS/GL)</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -135,48 +146,48 @@ export default function CalculatorScreen() {
           {activeTab === '1rm' && (
             <View>
               <View style={styles.recordsContainer}>
-                <Text style={styles.recordsTitle}>Мої Рекорди</Text>
+                <Text style={[styles.recordsTitle, { color: textColor }]}>Мої Рекорди</Text>
                 <View style={styles.recordsRow}>
-                  <TouchableOpacity style={styles.recordCard} onPress={() => router.push('/exercise/bench')}>
+                  <TouchableOpacity style={[styles.recordCard, { backgroundColor: cardBgColor }]} onPress={() => router.push('/exercise/bench')}>
                     <Image source={require('../../app/exercise/benchpress.png')} style={styles.recordIcon} />
-                    <Text style={styles.recordLabel}>Жим лежачи</Text>
-                    <Text style={styles.recordValue}>{records.bench} кг</Text>
+                    <Text style={[styles.recordLabel, { color: subTextColor }]}>Жим лежачи</Text>
+                    <Text style={[styles.recordValue, { color: headerTextColor }]}>{records.bench} кг</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.recordCard} onPress={() => router.push('/exercise/squat')}>
+                  <TouchableOpacity style={[styles.recordCard, { backgroundColor: cardBgColor }]} onPress={() => router.push('/exercise/squat')}>
                     <Image source={require('../../app/exercise/squat.png')} style={styles.recordIcon} />
-                    <Text style={styles.recordLabel}>Присяд зі штангою</Text>
-                    <Text style={styles.recordValue}>{records.squat} кг</Text>
+                    <Text style={[styles.recordLabel, { color: subTextColor }]}>Присяд зі штангою</Text>
+                    <Text style={[styles.recordValue, { color: headerTextColor }]}>{records.squat} кг</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={styles.recordCard} onPress={() => router.push('/exercise/deadlift')}>
+                  <TouchableOpacity style={[styles.recordCard, { backgroundColor: cardBgColor }]} onPress={() => router.push('/exercise/deadlift')}>
                     <Image source={require('../../app/exercise/deadlift.png')} style={styles.recordIcon} />
-                    <Text style={styles.recordLabel}>Станова тяга</Text>
-                    <Text style={styles.recordValue}>{records.deadlift} кг</Text>
+                    <Text style={[styles.recordLabel, { color: subTextColor }]}>Станова тяга</Text>
+                    <Text style={[styles.recordValue, { color: headerTextColor }]}>{records.deadlift} кг</Text>
                   </TouchableOpacity>
                 </View>
               </View>
 
-              <View style={styles.card}>
+              <View style={[styles.card, { backgroundColor: cardBgColor }]}>
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Вага штанги (кг):</Text>
+                  <Text style={[styles.label, { color: textColor }]}>Вага штанги (кг):</Text>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
                     keyboardType="numeric"
                     placeholder="Наприклад: 80"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={subTextColor}
                     value={weight}
                     onChangeText={setWeight}
                   />
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Кількість повторень:</Text>
+                  <Text style={[styles.label, { color: textColor }]}>Кількість повторень:</Text>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
                     keyboardType="numeric"
                     placeholder="Наприклад: 8"
-                    placeholderTextColor="#999"
+                    placeholderTextColor={subTextColor}
                     value={reps}
                     onChangeText={setReps}
                   />
@@ -210,13 +221,13 @@ export default function CalculatorScreen() {
 
           {activeTab === 'scores' && (
             <View>
-              <View style={styles.card}>
+              <View style={[styles.card, { backgroundColor: cardBgColor }]}>
                 
                 {/* Gender & Unit Toggles */}
                 <View style={styles.toggleRow}>
                   <View style={styles.toggleGroup}>
-                    <Text style={styles.label}>Стать:</Text>
-                    <View style={styles.switchContainer}>
+                    <Text style={[styles.label, { color: textColor }]}>Стать:</Text>
+                    <View style={[styles.switchContainer, { backgroundColor: inputBgColor, borderColor }]}>
                       <TouchableOpacity 
                         style={[styles.switchButton, !isFemale && styles.switchButtonActive]} 
                         onPress={() => setIsFemale(false)}>
@@ -231,8 +242,8 @@ export default function CalculatorScreen() {
                   </View>
 
                   <View style={styles.toggleGroup}>
-                    <Text style={styles.label}>Одиниці:</Text>
-                    <View style={styles.switchContainer}>
+                    <Text style={[styles.label, { color: textColor }]}>Одиниці:</Text>
+                    <View style={[styles.switchContainer, { backgroundColor: inputBgColor, borderColor }]}>
                       <TouchableOpacity 
                         style={[styles.switchButton, isKg && styles.switchButtonActive]} 
                         onPress={() => setIsKg(true)}>
@@ -248,12 +259,12 @@ export default function CalculatorScreen() {
                 </View>
 
                 <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Власна вага:</Text>
+                  <Text style={[styles.label, { color: textColor }]}>Власна вага:</Text>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
                     keyboardType="numeric"
                     placeholder={isKg ? "Наприклад: 80" : "Наприклад: 175"}
-                    placeholderTextColor="#999"
+                    placeholderTextColor={subTextColor}
                     value={bw}
                     onChangeText={setBw}
                   />
@@ -261,16 +272,16 @@ export default function CalculatorScreen() {
 
                 <View style={styles.inputGroup}>
                   <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <Text style={styles.label}>Піднята вага:</Text>
+                    <Text style={[styles.label, { color: textColor }]}>Піднята вага:</Text>
                     <TouchableOpacity onPress={setRecordsAsLiftedWeight}>
                       <Text style={styles.linkText}>Використати мої рекорди</Text>
                     </TouchableOpacity>
                   </View>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { backgroundColor: inputBgColor, borderColor, color: textColor }]}
                     keyboardType="numeric"
                     placeholder={isKg ? "Наприклад: 400" : "Наприклад: 880"}
-                    placeholderTextColor="#999"
+                    placeholderTextColor={subTextColor}
                     value={liftedWeight}
                     onChangeText={setLiftedWeight}
                   />
@@ -279,8 +290,8 @@ export default function CalculatorScreen() {
                 {/* Event & Category Toggles */}
                 <View style={{ marginBottom: 15 }}>
                   <View style={{ marginBottom: 15 }}>
-                    <Text style={styles.label}>Екіпірування:</Text>
-                    <View style={styles.switchContainer}>
+                    <Text style={[styles.label, { color: textColor }]}>Екіпірування:</Text>
+                    <View style={[styles.switchContainer, { backgroundColor: inputBgColor, borderColor }]}>
                       <TouchableOpacity 
                         style={[styles.switchButton, event === 'CL' && styles.switchButtonActive]} 
                         onPress={() => setEvent('CL')}>
@@ -295,8 +306,8 @@ export default function CalculatorScreen() {
                   </View>
 
                   <View>
-                    <Text style={styles.label}>Тип змагань:</Text>
-                    <View style={styles.switchContainer}>
+                    <Text style={[styles.label, { color: textColor }]}>Тип змагань:</Text>
+                    <View style={[styles.switchContainer, { backgroundColor: inputBgColor, borderColor }]}>
                       <TouchableOpacity 
                         style={[styles.switchButton, category === 'PL' && styles.switchButtonActive]} 
                         onPress={() => setCategory('PL')}>
@@ -332,17 +343,17 @@ export default function CalculatorScreen() {
                   </View>
                   
                   <View style={styles.scoreRow}>
-                    <View style={styles.scoreBoxSecondary}>
-                      <Text style={styles.scoreTitleSecondary}>Wilks (Новий)</Text>
-                      <Text style={styles.scoreValueSecondary}>{scores.wilks2}</Text>
+                    <View style={[styles.scoreBoxSecondary, { backgroundColor: cardBgColor, borderColor }]}>
+                      <Text style={[styles.scoreTitleSecondary, { color: subTextColor }]}>Wilks (Новий)</Text>
+                      <Text style={[styles.scoreValueSecondary, { color: headerTextColor }]}>{scores.wilks2}</Text>
                     </View>
-                    <View style={styles.scoreBoxSecondary}>
-                      <Text style={styles.scoreTitleSecondary}>Wilks (Старий)</Text>
-                      <Text style={styles.scoreValueSecondary}>{scores.oldWilks}</Text>
+                    <View style={[styles.scoreBoxSecondary, { backgroundColor: cardBgColor, borderColor }]}>
+                      <Text style={[styles.scoreTitleSecondary, { color: subTextColor }]}>Wilks (Старий)</Text>
+                      <Text style={[styles.scoreValueSecondary, { color: headerTextColor }]}>{scores.oldWilks}</Text>
                     </View>
-                    <View style={styles.scoreBoxSecondary}>
-                      <Text style={styles.scoreTitleSecondary}>IPF Бали</Text>
-                      <Text style={styles.scoreValueSecondary}>{scores.ipf}</Text>
+                    <View style={[styles.scoreBoxSecondary, { backgroundColor: cardBgColor, borderColor }]}>
+                      <Text style={[styles.scoreTitleSecondary, { color: subTextColor }]}>IPF Бали</Text>
+                      <Text style={[styles.scoreValueSecondary, { color: headerTextColor }]}>{scores.ipf}</Text>
                     </View>
                   </View>
                 </View>
@@ -359,7 +370,6 @@ export default function CalculatorScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f7fa',
   },
   scrollContent: {
     padding: 20,
@@ -373,12 +383,10 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#1a1a2e',
     marginBottom: 15,
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#e9ecef',
     borderRadius: 12,
     padding: 4,
     width: '100%',
@@ -390,7 +398,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   tabButtonActive: {
-    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -403,7 +410,6 @@ const styles = StyleSheet.create({
     color: '#6c757d',
   },
   tabTextActive: {
-    color: '#1a1a2e',
     fontWeight: '700',
   },
   recordsContainer: {
@@ -412,7 +418,6 @@ const styles = StyleSheet.create({
   recordsTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 15,
   },
   recordsRow: {
@@ -421,7 +426,6 @@ const styles = StyleSheet.create({
   },
   recordCard: {
     flex: 1,
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 15,
     alignItems: 'center',
@@ -440,7 +444,6 @@ const styles = StyleSheet.create({
   },
   recordLabel: {
     fontSize: 12,
-    color: '#666',
     marginTop: 8,
     marginBottom: 4,
     textAlign: 'center',
@@ -448,10 +451,8 @@ const styles = StyleSheet.create({
   recordValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1a1a2e',
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 20,
     shadowColor: '#000',
@@ -467,7 +468,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   linkText: {
@@ -477,13 +477,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   input: {
-    backgroundColor: '#f8f9fa',
     borderWidth: 1,
-    borderColor: '#e9ecef',
     borderRadius: 12,
     padding: 15,
     fontSize: 18,
-    color: '#333',
   },
   button: {
     backgroundColor: '#007bff',
@@ -561,10 +558,8 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     flexDirection: 'row',
-    backgroundColor: '#f8f9fa',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e9ecef',
     overflow: 'hidden',
   },
   switchButton: {
@@ -606,7 +601,6 @@ const styles = StyleSheet.create({
   },
   scoreBoxSecondary: {
     flex: 1,
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 15,
     alignItems: 'center',
@@ -617,7 +611,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#f0f0f0',
   },
   scoreTitle: {
     fontSize: 14,
@@ -633,7 +626,6 @@ const styles = StyleSheet.create({
   },
   scoreTitleSecondary: {
     fontSize: 10,
-    color: '#666',
     marginBottom: 5,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -641,6 +633,5 @@ const styles = StyleSheet.create({
   scoreValueSecondary: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#1a1a2e',
   },
 });

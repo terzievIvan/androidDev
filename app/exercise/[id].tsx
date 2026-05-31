@@ -5,6 +5,7 @@ import { Image, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleS
 import { useDispatch, useSelector } from 'react-redux';
 import { updateRecord } from '../../store/userSlice';
 import { saveRecords } from '../../utils/database';
+import { useThemeColor } from '../../hooks/use-theme-color';
 
 const exerciseData = {
   bench: {
@@ -52,11 +53,18 @@ export default function ExerciseScreen() {
 
   const [newValue, setNewValue] = useState(currentRecord ? currentRecord.toString() : '');
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const cardBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
+  const buttonBgColor = useThemeColor({ light: '#f8f9fa', dark: '#333' }, 'background');
+  const borderColor = useThemeColor({ light: '#e9ecef', dark: '#444' }, 'background');
+
   if (!data) {
     return (
-      <SafeAreaView style={styles.container}>
-        <Text>Вправу не знайдено</Text>
-        <TouchableOpacity onPress={() => router.back()}><Text>Назад</Text></TouchableOpacity>
+      <SafeAreaView style={[styles.container, { backgroundColor }]}>
+        <Text style={{ color: textColor }}>Вправу не знайдено</Text>
+        <TouchableOpacity onPress={() => router.back()}><Text style={{ color: textColor }}>Назад</Text></TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -83,16 +91,16 @@ export default function ExerciseScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={styles.header}>
+        <View style={[styles.header, { backgroundColor }]}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={28} color="#333" />
+            <Ionicons name="arrow-back" size={28} color={textColor} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{data.title}</Text>
+          <Text style={[styles.headerTitle, { color: textColor }]}>{data.title}</Text>
           <View style={{ width: 28 }} />
         </View>
 
@@ -102,18 +110,19 @@ export default function ExerciseScreen() {
             <Image source={data.image} style={{ width: 120, height: 120, resizeMode: 'contain' }} />
           </View>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Ваш рекорд (кг)</Text>
+          <View style={[styles.card, { backgroundColor: cardBgColor }]}>
+            <Text style={[styles.cardTitle, { color: subTextColor }]}>Ваш рекорд (кг)</Text>
             <View style={styles.inputRow}>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: textColor, borderColor }]}
                 keyboardType="numeric"
                 value={newValue}
                 onChangeText={setNewValue}
                 placeholder="0"
+                placeholderTextColor={subTextColor}
                 maxLength={4}
               />
-              <Text style={styles.kgText}>кг</Text>
+              <Text style={[styles.kgText, { color: subTextColor }]}>кг</Text>
             </View>
 
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -121,15 +130,15 @@ export default function ExerciseScreen() {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.tipsContainer}>
-            <Text style={styles.tipsTitle}>Вправи для покращення рекорду:</Text>
+          <View style={[styles.tipsContainer, { backgroundColor: cardBgColor }]}>
+            <Text style={[styles.tipsTitle, { color: textColor }]}>Вправи для покращення рекорду:</Text>
             {data.auxiliaryExercises.map((exercise: any) => (
               <TouchableOpacity 
                 key={exercise.id} 
-                style={styles.exerciseButton}
+                style={[styles.exerciseButton, { backgroundColor: buttonBgColor, borderColor }]}
                 onPress={() => router.push(`/auxiliary/${exercise.id}`)}
               >
-                <Text style={styles.exerciseButtonText}>{exercise.name}</Text>
+                <Text style={[styles.exerciseButtonText, { color: textColor }]}>{exercise.name}</Text>
                 <Ionicons name="chevron-forward" size={20} color="#007bff" />
               </TouchableOpacity>
             ))}
@@ -144,7 +153,6 @@ export default function ExerciseScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f7fa',
   },
   header: {
     flexDirection: 'row',
@@ -153,7 +161,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 20,
-    backgroundColor: '#f5f7fa',
   },
   backButton: {
     padding: 5,
@@ -161,7 +168,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
   },
   scrollContent: {
     padding: 20,
@@ -172,7 +178,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 25,
     alignItems: 'center',
@@ -185,7 +190,6 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     fontSize: 18,
-    color: '#666',
     marginBottom: 15,
   },
   inputRow: {
@@ -196,16 +200,13 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#1a1a2e',
     textAlign: 'center',
     minWidth: 100,
     borderBottomWidth: 2,
-    borderColor: '#e9ecef',
     paddingBottom: 5,
   },
   kgText: {
     fontSize: 24,
-    color: '#666',
     marginLeft: 10,
     fontWeight: '600',
   },
@@ -223,7 +224,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   tipsContainer: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 25,
     shadowColor: '#000',
@@ -235,7 +235,6 @@ const styles = StyleSheet.create({
   tipsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 15,
   },
   exerciseButton: {
@@ -244,15 +243,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 20,
-    backgroundColor: '#f8f9fa',
     borderRadius: 12,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#e9ecef',
   },
   exerciseButtonText: {
     fontSize: 16,
-    color: '#333',
     fontWeight: '500',
     flex: 1,
     paddingRight: 10,

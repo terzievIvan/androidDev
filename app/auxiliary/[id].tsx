@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Linking, Image } from 'react-native';
+import { useThemeColor } from '../../hooks/use-theme-color';
 
 const auxiliaryData = {
   'bench-narrow': { 
@@ -86,10 +87,17 @@ export default function AuxiliaryExerciseScreen() {
   const { id } = useLocalSearchParams();
   const data = auxiliaryData[id as keyof typeof auxiliaryData];
 
+  const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const cardBgColor = useThemeColor({ light: '#fff', dark: '#222' }, 'background');
+  const subTextColor = useThemeColor({ light: '#666', dark: '#aaa' }, 'text');
+  const imagePlaceholderBgColor = useThemeColor({ light: '#eaeaea', dark: '#333' }, 'background');
+  const borderColor = useThemeColor({ light: '#ddd', dark: '#444' }, 'background');
+
   if (!data) {
     return (
-      <SafeAreaView style={styles.container}>
-        <Text style={{ textAlign: 'center', marginTop: 20 }}>Вправу не знайдено</Text>
+      <SafeAreaView style={[styles.container, { backgroundColor }]}>
+        <Text style={{ textAlign: 'center', marginTop: 20, color: textColor }}>Вправу не знайдено</Text>
         <TouchableOpacity style={{ alignItems: 'center', marginTop: 20 }} onPress={() => router.back()}>
           <Text style={{ color: '#007bff' }}>Назад</Text>
         </TouchableOpacity>
@@ -98,12 +106,12 @@ export default function AuxiliaryExerciseScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
+      <View style={[styles.header, { backgroundColor }]}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={28} color="#333" />
+          <Ionicons name="arrow-back" size={28} color={textColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>{data.title}</Text>
+        <Text style={[styles.headerTitle, { color: textColor }]} numberOfLines={1}>{data.title}</Text>
         <View style={{ width: 28 }} />
       </View>
 
@@ -111,15 +119,15 @@ export default function AuxiliaryExerciseScreen() {
         {data.image ? (
           <Image source={data.image} style={styles.exerciseImage} />
         ) : (
-          <View style={styles.imagePlaceholder}>
-            <Ionicons name="image-outline" size={60} color="#ccc" />
-            <Text style={styles.imagePlaceholderText}>Зображення буде додано пізніше</Text>
+          <View style={[styles.imagePlaceholder, { backgroundColor: imagePlaceholderBgColor, borderColor }]}>
+            <Ionicons name="image-outline" size={60} color={subTextColor} />
+            <Text style={[styles.imagePlaceholderText, { color: subTextColor }]}>Зображення буде додано пізніше</Text>
           </View>
         )}
 
-        <View style={styles.contentCard}>
-          <Text style={styles.sectionTitle}>Опис вправи</Text>
-          <Text style={styles.descriptionPlaceholder}>
+        <View style={[styles.contentCard, { backgroundColor: cardBgColor }]}>
+          <Text style={[styles.sectionTitle, { color: textColor }]}>Опис вправи</Text>
+          <Text style={[styles.descriptionPlaceholder, { color: subTextColor }]}>
             {data.description || `Тут буде детальний опис техніки виконання вправи "${data.title}". Цей текст тимчасовий та буде замінений у майбутньому.`}
           </Text>
         </View>
@@ -139,7 +147,6 @@ export default function AuxiliaryExerciseScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f7fa',
   },
   header: {
     flexDirection: 'row',
@@ -148,7 +155,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 20,
-    backgroundColor: '#f5f7fa',
   },
   backButton: {
     padding: 5,
@@ -156,7 +162,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
     flex: 1,
     textAlign: 'center',
     paddingHorizontal: 10,
@@ -167,13 +172,11 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: '100%',
     height: 250,
-    backgroundColor: '#eaeaea',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 30,
     borderWidth: 2,
-    borderColor: '#ddd',
     borderStyle: 'dashed',
   },
   exerciseImage: {
@@ -185,12 +188,10 @@ const styles = StyleSheet.create({
   },
   imagePlaceholderText: {
     marginTop: 10,
-    color: '#999',
     fontSize: 14,
     fontWeight: '500',
   },
   contentCard: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 25,
     shadowColor: '#000',
@@ -202,12 +203,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 15,
   },
   descriptionPlaceholder: {
     fontSize: 15,
-    color: '#666',
     lineHeight: 24,
   },
   youtubeButton: {

@@ -4,28 +4,32 @@ import { withLayoutContext } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useThemeColor } from '../../hooks/use-theme-color';
 
 const MaterialTopTabs = createMaterialTopTabNavigator().Navigator;
 const SwipeTabs = withLayoutContext(MaterialTopTabs);
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const backgroundColor = useThemeColor({}, 'background');
+  const activeTintColor = useThemeColor({ light: '#007bff', dark: '#4da3ff' }, 'text');
+  const inactiveTintColor = useThemeColor({ light: '#888', dark: '#666' }, 'text');
 
   return (
     <SwipeTabs
       tabBarPosition="bottom"
       screenOptions={{
-        tabBarActiveTintColor: '#007bff',
-        tabBarInactiveTintColor: '#888',
+        tabBarActiveTintColor: activeTintColor,
+        tabBarInactiveTintColor: inactiveTintColor,
         tabBarIndicatorStyle: {
-          backgroundColor: '#007bff',
+          backgroundColor: activeTintColor,
           height: 3,
         },
         tabBarStyle: {
           paddingBottom: Platform.OS === 'ios' ? insets.bottom : 5,
           paddingTop: 8,
           height: Platform.OS === 'ios' ? 55 + insets.bottom : 60,
-          backgroundColor: '#ffffffff',
+          backgroundColor: backgroundColor,
         },
         tabBarLabelStyle: {
           fontSize: 11,
