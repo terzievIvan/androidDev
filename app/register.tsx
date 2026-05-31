@@ -4,7 +4,13 @@ import * as ImagePicker from 'expo-image-picker';
 import { useDispatch } from 'react-redux';
 import { registerUser } from '../store/userSlice';
 import { router } from 'expo-router';
-import { initDB, getUser, saveUser } from '../utils/database';
+import { initDB, getUser, saveUser, loginWithGoogle } from '../utils/database';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import * as AuthSession from 'expo-auth-session';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function RegisterScreen() {
   const [name, setName] = useState('');
@@ -23,6 +29,58 @@ export default function RegisterScreen() {
     };
     setupDB();
   }, []);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    webClientId: '1018057413277-38klvoncefrmb5dpnde54rl53304h4mr.apps.googleusercontent.com',
+    iosClientId: 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com',
+    androidClientId: '1018057413277-qojrkel2f67rh0nedr96lok23r6fdqcr.apps.googleusercontent.com',
+    redirectUri: AuthSession.makeRedirectUri({
+      scheme: 'com.vanaterziev.gym',
+    }),
+  });
+
+  React.useEffect(() => {';'
+    if (response?.type === 'success') {
+      const { authentication } = response;
+      if (authentication?.accessToken) {
+        fetchUserInfo(authentication.accessToken);
+      }
+    }
+  }, [response]);
+
+  const fetchUserInfo = async (token: string) => {
+    try {
+      const res = await fetch('https://www.googleapis.com/userinfo/v2/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const user = await res.json();
+      
+      if (user && user.email) {
+        const dbUser = await loginWithGoogle(user.email, user.name || 'Google User', user.picture);
+        if (dbUser) {
+           const userData = {
+            name: dbUser.name,
+            email: dbUser.email,
+            userTag: dbUser.userTag,
+            avatarUri: dbUser.avatarUri,
+            records: {
+              bench: dbUser.bench || 0,
+              squat: dbUser.squat || 0,
+              deadlift: dbUser.deadlift || 0,
+              bodyWeight: dbUser.bodyWeight || 0
+            }
+          };
+          await AsyncStorage.setItem('user', JSON.stringify(userData));
+          dispatch(registerUser(userData));
+          router.replace('/shop');
+        } else {
+           Alert.alert('Помилка', 'Не вдалося зареєструватись через сервер');
+        }
+      }
+    } catch (e) {
+      Alert.alert('Помилка', 'Не вдалося отримати дані від Google');
+    }
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -71,7 +129,7 @@ export default function RegisterScreen() {
     const user = await saveUser(name, email, password, avatarUri);
 
     if (user) {
-      dispatch(registerUser({
+      const userData = {
         name: user.name,
         email: user.email,
         userTag: user.userTag,
@@ -82,9 +140,13 @@ export default function RegisterScreen() {
           deadlift: user.deadlift || 0,
           bodyWeight: user.bodyWeight || 0
         }
-      }));
+      };
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      dispatch(registerUser(userData));
 
       router.replace('/shop');
+    } else {
+      Alert.alert('Помилка', 'Не вдалося зареєструватись на сервері');
     }
   };
 
@@ -170,6 +232,14 @@ export default function RegisterScreen() {
 
         <TouchableOpacity style={styles.button} onPress={handleRegister}>
           <Text style={styles.buttonText}>Зареєструватися</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.button, { backgroundColor: '#4285F4', marginTop: 15 }]} 
+          onPress={() => promptAsync()}
+          disabled={!request}
+        >
+          <Text style={styles.buttonText}>Зареєструватися через Google</Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.linkButton} onPress={() => router.back()}>

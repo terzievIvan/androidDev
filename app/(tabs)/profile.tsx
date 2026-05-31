@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateUserProfile, logoutUser } from '../../store/userSlice';
 import { router } from 'expo-router';
 import { updateUser } from '../../utils/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function EditProfileScreen() {
   const user = useSelector((state: any) => state.user);
@@ -47,7 +48,8 @@ export default function EditProfileScreen() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('user');
     dispatch(logoutUser());
     router.replace('/');
   };

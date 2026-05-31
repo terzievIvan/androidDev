@@ -2,14 +2,25 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 
 // Динамічно отримуємо IP-адресу сервера, щоб працювало і на телефоні
-const debuggerHost = Constants.expoConfig?.hostUri;
 let API_URL = 'http://localhost:3000';
+
+const debuggerHost = Constants.expoConfig?.hostUri || Constants.manifest?.debuggerHost || Constants.manifest2?.extra?.expoGo?.debuggerHost;
 
 if (debuggerHost) {
   API_URL = `http://${debuggerHost.split(':')[0]}:3000`;
+} else if (Constants.experienceUrl && Constants.experienceUrl.includes('exp://')) {
+  try {
+    // Parse IP from exp://10.177.60.233:8081
+    const match = Constants.experienceUrl.match(/exp:\/\/([0-9.]+):/);
+    if (match && match[1]) {
+      API_URL = `http://${match[1]}:3000`;
+    }
+  } catch(e) {}
 } else if (Platform.OS === 'android') {
   API_URL = 'http://10.0.2.2:3000';
 }
+
+console.log('API_URL is set to:', API_URL);
 
 export const initDB = async () => {
   // База даних тепер ініціалізується на сервері
@@ -169,5 +180,28 @@ export const removeFriend = async (email, friendId) => {
   } catch (error) {
     console.error('Error removing friend on server:', error);
     return { error: error.message };
+  }
+};
+
+export const loginWithGoogle = async (email, name, avatarUri) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/google`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, name, avatarUri }),
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Google login failed');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error logging in with Google on server:', error);
+    return null;
   }
 };

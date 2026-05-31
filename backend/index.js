@@ -121,6 +121,43 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/auth/google', async (req, res) => {
+  const { email, name, avatarUri } = req.body;
+  
+  if (!email || !name) {
+    return res.status(400).json({ error: 'Email and name are required' });
+  }
+
+  try {
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (user) {
+      let safeUser = { ...user };
+      delete safeUser.password;
+      
+      if (!safeUser.userTag) {
+        const newTag = generateTag();
+        await db.run('UPDATE users SET userTag = ? WHERE id = ?', [newTag, safeUser.id]);
+        safeUser.userTag = newTag;
+      }
+      return res.status(200).json(safeUser);
+    } else {
+      const dummyPassword = await bcrypt.hash(Math.random().toString(36), 10);
+      const userTag = generateTag();
+      
+      const result = await db.run(
+        'INSERT INTO users (name, email, password, avatarUri, userTag) VALUES (?, ?, ?, ?, ?)',
+        [name, email, dummyPassword, avatarUri || null, userTag]
+      );
+      
+      return res.status(201).json({ id: result.lastID, name, email, avatarUri: avatarUri || null, bench: 0, squat: 0, deadlift: 0, bodyWeight: 0, userTag });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 app.put('/user', async (req, res) => {
   const { email, name, avatarUri } = req.body;
   
